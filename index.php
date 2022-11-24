@@ -1,18 +1,27 @@
 <?php
+    session_start();
     include_once 'bootstrap.php';
     initialConditons();
-    /*
+    
     try{
-        $sqlite_path = './db/base.db';
-        $pdo = new PDO("sqlite:" . $sqlite_path, '', '', array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,));
-        // Obtenemos menus de la bd
-        $menus = $pdo->exec("SELECT * FROM menu WHERE id_menu_padre = '0' ORDER BY id;");
-        // Obtenemos submenus y los ordenamos respecto a su 
         
+        $pdo = $_SESSION["pdo_sqlite"];
+        // Obtenemos menus de la bd
+        $menus = $pdo->query("SELECT * FROM menu WHERE id_menu_padre = '0' ORDER BY id;")->fetchAll();
+        // Obtenemos submenus y los ordenamos respecto a su 
+        $submenus = array();
+
+        foreach($menus as $menu) {
+            if($menu["id_menu_padre"] == "0") {
+                $submenus[$menu["id"]][] = $menu;
+            }            
+        }
+
+        print_r($menus); print_r("<br />");
+        print_r($submenus); print_r("<br />");
     }catch(Exception $ex){
         print_r($ex);
     }
-    */
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -31,11 +40,14 @@
         <nav class="navbar navbar-dark navbar-expand-sm bg-dark ">
             <div class="container-fluid">
                 <a href="#" class="navbar-brand">Evaluation</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
 
-                <div class="collapse navbar-collapse">
+                <div class="collapse navbar-collapse" id="main-navbar">
                     <ul class="navbar-nav me-auto mb-2 mb-sm">
                         <li class="nav-item dropdown">
-                            <a href="#" class="nav-link dropdown-toggle">Menu</a>
+                            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Menu</a>
                             <ul class="dropdown-menu">
                                 <li><a href="#" class="dropdown-item">SubmenuItem</a></li>
                             </ul>

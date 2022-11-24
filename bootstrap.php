@@ -19,7 +19,7 @@
  function checkDatabase() {
     $directory = './data';
     $sqlite_path = $directory . '/base.db';
-    $sqlite_opts = [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION];
+    $sqlite_opts = [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC];
     
     if(!file_exists($directory)){
         mkdir($directory, 0777, true);
@@ -28,14 +28,21 @@
         if(!file_exists($base)) {
             $sqlite_opts = [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION];
             $pdo = new PDO("sqlite:" . $sqlite_path, '', '', $sqlite_opts);
-            $db->exec("CREATE TABLE menu(id INTEGER PRIMARY KEY, nombre TEXT, id_menu_padre INT, descripcion TEXT)");
-            $db->exec("INSERT INTO menu(nombre, id_menu_padre, descripcion) VALUES('Catálogos', 0, 'Listado de Catálogos')");
-            $db->exec("INSERT INTO menu(nombre, id_menu_padre, descripcion) VALUES('Tipos de Archivo', 1, 'Catálogo de Archivos')");
-            $db->exec("INSERT INTO menu(nombre, id_menu_padre, descripcion) VALUES('Profesiones', 1, 'Listado de Profesiones')");
-            $db->exec("INSERT INTO menu(nombre, id_menu_padre, descripcion) VALUES('Marcas', 0, 'Listado de Marcas de Autos')");
-            $db->exec("INSERT INTO menu(nombre, id_menu_padre, descripcion) VALUES('SEAT', 4, 'Marca Seat')");
-            $db->exec("INSERT INTO menu(nombre, id_menu_padre, descripcion) VALUES('BMW', 4, 'Marca bmw')");
+
+            $pdo->exec("CREATE TABLE menu(id INTEGER PRIMARY KEY, nombre TEXT, id_menu_padre INT, descripcion TEXT)");
+            $pdo->exec("INSERT INTO menu(nombre, id_menu_padre, descripcion) VALUES('Catálogos', 0, 'Listado de Catálogos')");
+            $pdo->exec("INSERT INTO menu(nombre, id_menu_padre, descripcion) VALUES('Tipos de Archivo', 1, 'Catálogo de Archivos')");
+            $pdo->exec("INSERT INTO menu(nombre, id_menu_padre, descripcion) VALUES('Profesiones', 1, 'Listado de Profesiones')");
+            $pdo->exec("INSERT INTO menu(nombre, id_menu_padre, descripcion) VALUES('Marcas', 0, 'Listado de Marcas de Autos')");
+            $pdo->exec("INSERT INTO menu(nombre, id_menu_padre, descripcion) VALUES('SEAT', 4, 'Marca Seat')");
+            $pdo->exec("INSERT INTO menu(nombre, id_menu_padre, descripcion) VALUES('BMW', 4, 'Marca bmw')");
+            // Las conexiones a bd no se pueden serializar
+            //$_SESSION["pdo_sqlite"] = $pdo;
+
+            $pdo = null;
         }
+    }else{
+        //print_r("DirExiste!");
     }
 
  }
