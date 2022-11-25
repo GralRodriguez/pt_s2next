@@ -1,0 +1,15 @@
+{
+    "name": "gralrodriguez/pruebatecnica_s2next",
+    "authors": [
+        {
+            "name": "Héctor Giovanni Rodríguez Ramos",
+            "email": "gral.rodriguezr@gmail.com"
+        }
+    ],
+    "description": "A Technical Proof of Abilities",
+    "autoload" : {
+        "psr-4": {
+            "S2Next\\": "s2next/"
+        }
+    }
+}

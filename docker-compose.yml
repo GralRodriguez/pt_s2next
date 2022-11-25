@@ -1,37 +1,26 @@
 version: '3.8'
+
 services:
-  nginx_s2next:
-    container_name: nginx_s2next
-    build: './docker/nginx/'
-    ports:
-      - "8888:80"
-    depends_on:
-      - mysql_s2next
-      - php_s2next
-    volumes:
-      - ./:/var/www/html
-    networks:
-      - s2next_network
-  mysql_s2next:
-    image: mysql:5.7
-    container_name: mysql_s2next
+  app_s2next:
+    build: 
+      context: ./
+      dockerfile: Dockerfile
+    container_name: app_s2next
     restart: always
-    environment:
-      MYSQL_DATABASE: 's2next'
-      MYSQL_ROOT_PASSWORD: 'gralrodriguez'
-      MYSQL_USER: 's2next'
-      MYSQL_PASS: 's2next'
-    ports:
-      - "33080:3306"
+    working_dir: /var/www/
     volumes:
-      - ./mysql:/var/lib/mysql
+      - ./src:/var/www
     networks:
       - s2next_network
-  php_s2next:
-    container_name: php_s2next
-    build: './docker/php/'
+  nginx_s2next:
+    image: nginx:1.19-alpine
+    container_name: nginx_s2next
+    restart: always
+    ports:
+      - "9999:80"
     volumes:
-      - ./:/var/www/html
+      - ./src:/var/www
+      - ./nginx:/etc/nginx/conf.d
     networks:
       - s2next_network
 networks:

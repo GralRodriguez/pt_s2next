@@ -1,28 +1,3 @@
-<?php
-    session_start();
-    include_once 'bootstrap.php';
-    initialConditons();
-    
-    try{
-        
-        $pdo = $_SESSION["pdo_sqlite"];
-        // Obtenemos menus de la bd
-        $menus = $pdo->query("SELECT * FROM menu WHERE id_menu_padre = '0' ORDER BY id;")->fetchAll();
-        // Obtenemos submenus y los ordenamos respecto a su 
-        $submenus = array();
-
-        foreach($menus as $menu) {
-            if($menu["id_menu_padre"] == "0") {
-                $submenus[$menu["id"]][] = $menu;
-            }            
-        }
-
-        print_r($menus); print_r("<br />");
-        print_r($submenus); print_r("<br />");
-    }catch(Exception $ex){
-        print_r($ex);
-    }
-?>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -32,7 +7,7 @@
         <meta name="author" content="Hector Giovanni Rodriguez Ramos">
         <meta name="description" content="Prueba técnica solicitada por S2NEXT">
         <meta name="keywords" content="HTML, CSS, Javascript, PHP, Prueba Técnica, S2NEXT">
-        <title>Index::S2NEXT</title>
+        <title>Vista Index::S2NEXT</title>
         <!-- CSS only -->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
     </head>
@@ -46,56 +21,67 @@
 
                 <div class="collapse navbar-collapse" id="main-navbar">
                     <ul class="navbar-nav me-auto mb-2 mb-sm">
-                        <li class="nav-item dropdown">
-                            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Menu</a>
-                            <ul class="dropdown-menu">
-                                <li><a href="#" class="dropdown-item">SubmenuItem</a></li>
-                            </ul>
-                        </li>
+                        <?php foreach($this->params['menus'] as $menu) : ?>
+                            <?php if($menu->getIdMenuPadre() == "0") { ?>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <?php echo $menu->getDescripcion(); ?>
+                                </a>
+                                <ul class="dropdown-menu">
+                                <?php foreach($this->params['menus'] as $menu2) : ?>
+                                    <?php if($menu2->getIdMenuPadre() == $menu->getId()) { ?>
+                                    <li>
+                                        <a href="/mostrar?id=<?= $menu2->getId(); ?>" class="dropdown-item">
+                                            <?php echo $menu2->getDescripcion(); ?>
+                                        </a>
+                                    </li>
+                                    <?php } ?>
+                                <?php endforeach; ?>
+                                </ul>
+                            </li>
+                            <?php } ?>
+                        <?php endforeach; ?> 
                     </ul>
+                    
                 </div>
             </div>
         </nav>
+        <br>
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-1"></div>
                 <div class="col-md-10">
                     <h3>Menu</h3>
-                    <a class="btn btn-success" href="<?= "alta.php" ?>">
+                    <a class="btn btn-success" href="/crear">
                         <i class="fa fa-plus"></i> Nuevo
+                    </a>
+                    <a class="btn btn-primary" href="/">
+                        <i class="fa fa-plus"></i> Home
                     </a>
                 </div>
                 <div class="col-md-1"></div>
                 
             </div>
+            <hr>
             <div class="row">
                 <div class="col-md-1"></div>
                 <div class="col-md-10">
-                    <table class="table table-sm table-striped">
+                    <h5>Menu Actualizado</h5>
+                    <table class="table table-sm table-hover">
                         <thead class="thead-dark">
                             <tr>
-                                <th>ID</th>
+                                <th>Id</th>
                                 <th>Nombre</th>
-                                <th>Menu Padre</th>
+                                <th>IdMenuPadre</th>
                                 <th>Descripcion</th>
-                                <th>Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
-
                             <tr>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td>
-                                    <button class="btn btn-warning">
-                                        Editar
-                                    </button>
-                                    <button class="btn btn-danger">
-                                        Eliminar
-                                    </button>
-                                </td>
+                                <td><?= $this->params['menuAhora']->getId(); ?></td>
+                                <td><?= $this->params['menuAhora']->getNombre(); ?></td>
+                                <td><?= $this->params['menuAhora']->getIdMenuPadre(); ?></td>
+                                <td><?= $this->params['menuAhora']->getdescripcion(); ?></td>
                             </tr>
                         </tbody>
                     </table>

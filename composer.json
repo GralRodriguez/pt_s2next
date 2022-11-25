@@ -1,9 +1,0 @@
-{
-    "name": "gralrodriguez/pruebatecnica_s2next",
-    "description": "A Technical Proof of Abilities",
-    "autoload" : {
-        "psr-4": {
-            "App\\": "app/"
-        }
-    }
-}
